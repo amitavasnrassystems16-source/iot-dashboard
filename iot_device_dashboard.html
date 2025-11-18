@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNRAS IoT Device Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Use the non-module Firebase v8 scripts so `firebase` global is defined consistently with the rest of the pages -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #4c6ef5, #22d3ee);
+      min-height: 100vh;
+    }
+    .card {
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+
+<body class="p-10">
+  <h1 class="text-4xl text-center font-bold text-white mb-8">SNRAS IoT Device Dashboard</h1>
+
+  <div class="flex justify-center mb-6">
+    <input id="searchBox" type="text" placeholder="Search Device ID..."
+      class="w-1/2 p-3 rounded-xl shadow-md text-gray-700" />
+  </div>
+
+  <div id="authMsg" class="text-center text-yellow-100 mb-6"></div>
+
+  <div id="cards" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+  <script>
+    // Use the project's web config found in other files
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbcICT3ZbfJWFPLXzbG4UUeWG7Q2OQEjg",
+      authDomain: "water-quality-35a00.firebaseapp.com",
+      databaseURL: "https://water-quality-35a00-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "water-quality-35a00",
+      storageBucket: "water-quality-35a00.appspot.com",
+      messagingSenderId: "138665105368",
+      appId: "1:138665105368:web:0896a5e8062eb9e49844ad",
+      measurementId: "G-NNCT5SYCJJ"
+    };
+
+    // Initialize once and require auth like other pages
+    try {
+      if (!firebase || !firebase.initializeApp) throw new Error('firebase not loaded');
+    } catch (e) {
+      console.error('Firebase is not defined. Check the script tags and network.', e);
+      document.getElementById('authMsg').innerText = 'Firebase library not loaded — check console for details';
+    }
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+    const auth = firebase.auth();
+
+    // Device range matching available main pages (main82.html through main99.html and main500.html)
+    const startID = 82;
+    const endID = 99;
+    const extraDevices = [500]; // Additional devices like main500.html
+
+    // Main pages available in this project — cards will link to their device page if available.
+    // This is read from the repo: main82.html .. main99.html and main500.html are present.
+    const availableMainPages = new Set([
+      '82','83','84','85','86','87','88','89','90','91','92','93','94','95','96','97','98','99','500'
+    ]);
+
+    const cardsContainer = document.getElementById("cards");
+
+    function createCard(deviceID) {
+      const card = document.createElement("div");
+      card.id = deviceID;
+      card.className = "card bg-white shadow-xl rounded-2xl p-5";
+
+      // compute a device link if there is a page for this device
+      const suffix2 = deviceID.slice(-2);
+      const suffix3 = deviceID.slice(-3);
+      let titleHtml = deviceID;
+      if (availableMainPages.has(suffix3)) {
+        titleHtml = `<a class="underline text-indigo-700" href="./main${suffix3}.html">${deviceID}</a>`;
+      } else if (availableMainPages.has(suffix2)) {
+        titleHtml = `<a class="underline text-indigo-700" href="./main${suffix2}.html">${deviceID}</a>`;
+      }
+
+      card.innerHTML = `
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-bold">${titleHtml}</h2>
+          <span class="w-4 h-4 bg-red-500 rounded-full status-dot" title="Status"></span>
+        </div>
+
+        <p class="mt-3"><b>DO:</b> <span class="do">--</span></p>
+        <p><b>TDS:</b> <span class="tds">--</span></p>
+        <p><b>pH:</b> <span class="ph">--</span></p>
+        <p><b>Temp:</b> <span class="temp">--</span> °C</p>
+
+        <p class="text-gray-600 text-sm mt-3">Last Update: 
+          <span class="updateTime">--</span>
+        </p>
+      `;
+
+      cardsContainer.appendChild(card);
+    }
+
+    function loadLatest(deviceID) {
+      // In this project the data is under data/{deviceId}/{timestamp}
+      const path = `data/${deviceID}`;
+
+      console.log('Loading latest data for path:', path);
+      
+      // First, get all children and manually get the last one (most recent)
+      db.ref(path).once("value", (snapshot) => {
+        if (!snapshot.exists()) {
+          console.warn('No data found for', deviceID);
+          return;
+        }
+
+        // Convert snapshot to array of [key, value] pairs
+        const entries = [];
+        snapshot.forEach((childSnapshot) => {
+          entries.push([childSnapshot.key, childSnapshot.val()]);
+        });
+
+        if (entries.length === 0) {
+          console.warn('No entries found for', deviceID);
+          return;
+        }
+
+        // Get the last entry (keys are timestamps, naturally ordered)
+        const [lastKey, data] = entries[entries.length - 1];
+        console.log('Last data for', deviceID, 'key:', lastKey, 'data:', data);
+
+        const card = document.getElementById(deviceID);
+        if (!card) {
+          console.warn('Card not found for', deviceID);
+          return;
+        }
+
+        // Round values to 1 decimal place like in details86.js
+        const doVal = data.do ? (Math.round(parseFloat(data.do) * 10) / 10) : '--';
+        const tdsVal = data.tds ? data.tds : '--';
+        const phVal = data.ph ? (Math.round(parseFloat(data.ph) * 10) / 10) : '--';
+        const tempVal = data.temperature ? (Math.round(parseFloat(data.temperature) * 10) / 10) : '--';
+
+        // Human-friendly datetime - use the time property from data
+        const timeStr = data.time ?? null;
+        let human = '--';
+        if (timeStr) {
+          const num = Number(timeStr);
+          if (!isNaN(num)) {
+            human = new Date(num).toLocaleString();
+          } else {
+            human = String(timeStr);
+          }
+        }
+
+        card.querySelector(".do").innerText = doVal;
+        card.querySelector(".tds").innerText = tdsVal;
+        card.querySelector(".ph").innerText = phVal;
+        card.querySelector(".temp").innerText = tempVal;
+        card.querySelector(".updateTime").innerText = human;
+      }, (err) => {
+        console.error("Firebase read error for", deviceID, err);
+      });
+
+      // Listen for real-time updates on new entries
+      db.ref(path).on("child_added", (snapshot) => {
+        const data = snapshot.val();
+        const card = document.getElementById(deviceID);
+        if (!card) return;
+
+        const doVal = data.do ? (Math.round(parseFloat(data.do) * 10) / 10) : '--';
+        const tdsVal = data.tds ? data.tds : '--';
+        const phVal = data.ph ? (Math.round(parseFloat(data.ph) * 10) / 10) : '--';
+        const tempVal = data.temperature ? (Math.round(parseFloat(data.temperature) * 10) / 10) : '--';
+
+        const timeStr = data.time ?? null;
+        let human = '--';
+        if (timeStr) {
+          const num = Number(timeStr);
+          if (!isNaN(num)) {
+            human = new Date(num).toLocaleString();
+          } else {
+            human = String(timeStr);
+          }
+        }
+
+        card.querySelector(".do").innerText = doVal;
+        card.querySelector(".tds").innerText = tdsVal;
+        card.querySelector(".ph").innerText = phVal;
+        card.querySelector(".temp").innerText = tempVal;
+        card.querySelector(".updateTime").innerText = human;
+      }, (err) => {
+        console.error("Firebase child_added error for", deviceID, err);
+      });
+
+      // Check live status under keepAlive/{deviceId}/online like other pages
+      db.ref(`keepAlive/${deviceID}/online`).on("value", (snap) => {
+        const isOnline = snap.val();
+        const card = document.getElementById(deviceID);
+        if (card) {
+          const dot = card.querySelector('.status-dot');
+          dot.style.backgroundColor = isOnline ? 'green' : 'red';
+          dot.title = isOnline ? 'Online' : 'Offline';
+        }
+      });
+    }
+
+    function loadAllDevices() {
+      // Load devices from 82 to 99
+      for (let i = startID; i <= endID; i++) {
+        const id = "Y0416536328924" + i;
+        createCard(id);
+        loadLatest(id);
+      }
+      
+      // Load extra devices (like 500)
+      extraDevices.forEach(deviceNum => {
+        const id = "Y0416536328924" + deviceNum;
+        createCard(id);
+        loadLatest(id);
+      });
+    }
+
+    // Search Filter
+    document.getElementById("searchBox").addEventListener("input", function () {
+      const value = this.value.toLowerCase();
+      const cards = document.querySelectorAll(".card");
+
+      cards.forEach((card) => {
+        card.style.display = card.id.toLowerCase().includes(value)
+          ? "block"
+          : "none";
+      });
+    });
+
+    // Wait for auth state like main86.js pages — load devices only if the user is authenticated
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("Authenticated, loading devices...");
+        loadAllDevices();
+        document.getElementById('authMsg').innerHTML = '';
+      } else {
+        document.getElementById('authMsg').innerHTML = `Not signed in. <a href="./index.html" class="underline">Sign in here</a> then reload this page.`;
+        console.warn("Not signed in — redirecting to login (index.html)");
+        // If your app uses a different login flow, this can be changed
+        // window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>
