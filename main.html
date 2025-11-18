@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./snrasLogo.png" type="image/icon type">
+    <title>SNRAS SYSTEMS</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCbcICT3ZbfJWFPLXzbG4UUeWG7Q2OQEjg",
+            authDomain: "water-quality-35a00.firebaseapp.com",
+            databaseURL: "https://water-quality-35a00-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "water-quality-35a00",
+            storageBucket: "water-quality-35a00.appspot.com",
+            messagingSenderId: "138665105368",
+            appId: "1:138665105368:web:0896a5e8062eb9e49844ad",
+            measurementId: "G-NNCT5SYCJJ"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+    </script>
+
+    </script>
+    <style type="text/css" media="screen">
+        .body {
+            margin: 0;
+            width: 100%;
+        }
+        
+        table,
+        th,
+        td {
+            text-align: center;
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+        }
+        th,
+
+    /* table {
+        border-collapse: separate; 
+        border-spacing: 0; 
+        width: 100%; 
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 10px; 
+        text-align: center;
+        /* border-radius: 5%; 
+        overflow: hidden; 
+    }
+    th:first-child {
+        border-top-left-radius: 25%; 
+    }
+    th:last-child {
+        border-top-right-radius: 25%;
+    }
+    tr:last-child td:first-child {
+        border-bottom-left-radius: 25%; 
+    }
+    tr:last-child td:last-child {
+        border-bottom-right-radius: 25%; 
+    } */
+    /* not overlap dropdown on card layout or get to front of card */  
+.btn-group {
+    position: relative; /* Ensure z-index works */
+    z-index: 1050; /* Higher than other elements */
+}
+.dropdown-menu {
+    z-index: 1050; /* Optional, but can be set if needed */
+}
+       
+    </style>
+    <style>
+        /* test */
+        /* .containertest {
+            height: 100vh;
+            width: 80vw;
+            font-family: 'cairo', serif;
+        } */
+        .pageCart {
+            display: flex;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+            /* margin-top: .5rem !important; */
+            border: 2px solid black;
+            border-radius: 20px;
+            margin: 15px;
+            background-color: #f7f7f7;
+            border: 3px solid #f2f2f2;
+            border-radius: 15px;
+            /* margin-top: 10px; */
+            /* margin: 31px; */
+            /* width: 40%; */
+            width: auto;
+            padding: 20px 10px 0 10px;
+            flex-direction: row;
+            align-content: center;
+        }
+
+        .controllerButton {
+            display: flex;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+            align-items: center;
+            background-color: #f7f7f7;
+            border: 3px solid #f2f2f2;
+            border-radius: 10px;
+            padding: 8px;
+            font-size: 20px;
+            font-family: auto;
+            justify-content: center;
+        }
+
+        .controllerButtonItem {
+            display: flex;
+            /* box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19); */
+            align-items: center;
+            color: black;
+            background-color: #e4e5e680;
+            /* border: 3px solid #f2f2f2; */
+            border-radius: 5px;
+            padding: 4px;
+            margin: 5px;
+            font-size: 20px;
+            font-family: auto;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .loader {
+            height: 30px;
+            width: 400px;
+            position: absolute;
+            top: 80px;
+            bottom: 0;
+            left: 155px;
+            right: 0;
+            margin: auto;
+        }
+
+        .buttonBoxClass {
+            display: flex;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+            /* margin-top: .5rem !important; */
+            border: 2px solid black;
+            border-radius: 20px;
+            margin: 8px;
+            align-items: center;
+            background-color: #f7f7f7;
+            border: 3px solid #f2f2f2;
+            border-radius: 15px;
+            /* margin-top: 10px; */
+            /* margin: 31px; */
+            /* width: 40%; */
+            width: auto;
+            padding: 8px;
+            justify-content: center;
+        }
+
+        .b1button {
+            background-image: linear-gradient(90deg, #45b8fb, #6d87fa, #9a53fa);
+            /* box-shadow: 0.5px 0.5px 0.5px 1px #813bef; */
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            display: flex;
+            font-size: 20px;
+            margin: 5px;
+            /* padding: 14px; */
+            text-align: center;
+            width: 115px;
+            height: 50px;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mainButtonClass {
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+            /* margin-top: .5rem !important; */
+            border: 2px solid black;
+            border-radius: 20px;
+            /* margin: 3px; */
+            align-items: center;
+            background-color: #f7f7f7;
+            border: 3px solid #f2f2f2;
+            border-radius: 15px;
+            margin-top: 100px;
+            margin-bottom: 10px;
+            /* margin: 31px; */
+            /* width: 60%; */
+            /* padding: 12px; */
+            justify-content: center;
+        }
+
+        .loader--dot {
+            animation-name: loader;
+            animation-timing-function: ease-in-out;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            height: 20px;
+            width: 20px;
+            border-radius: 100%;
+            background-color: black;
+            position: absolute;
+            border: 2px solid white;
+        }
+
+        /* Vibrant Red: #ff0000
+Fresh Green: #00ff00
+Deep Blue: #0000ff
+Sunny Yellow: #ffff00
+Playful Orange: #ff8000
+Elegant Purple: #800080
+*/
+
+        .loader--dot:first-child {
+            background-color: #ff0000;
+            animation-delay: 0.5s;
+        }
+
+        .loader--dot:nth-child(2) {
+            background-color: #00ff00;
+            animation-delay: 0.4s;
+        }
+
+        .loader--dot:nth-child(3) {
+            background-color: #0000ff;
+            animation-delay: 0.3s;
+        }
+
+        .loader--dot:nth-child(4) {
+            background-color: #ffff00;
+            animation-delay: 0.2s;
+        }
+
+        .loader--dot:nth-child(5) {
+            background-color: #ff8000;
+            animation-delay: 0.1s;
+        }
+
+        .loader--dot:nth-child(6) {
+            background-color: #800080;
+            animation-delay: 0s;
+        }
+
+        .loader--text {
+            position: absolute;
+            top: 200%;
+            left: 0;
+            right: 0;
+            width: 10rem;
+            margin: auto;
+        }
+
+        .loader--text:after {
+            content: "";
+            font-weight: bold;
+            animation-name: loading-text;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes loader {
+            15% {
+                transform: translateX(0);
+            }
+
+            45% {
+                transform: translateX(230px);
+            }
+
+            65% {
+                transform: translateX(230px);
+            }
+
+            95% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes loading-text {
+            0% {
+                content: "";
+            }
+
+            25% {
+                content: "";
+            }
+
+            50% {
+                content: "";
+            }
+
+            75% {
+                content: "";
+            }
+        }
+
+
+
+
+        /* testEnd */
+
+        .sqlDataClass {
+            position: absolute;
+            top: 11px;
+            right: 170px;
+            font-size: 18px
+        }
+
+        .sqlTableClass {
+            position: absolute;
+            top: 52%;
+            left: 12%;
+            
+
+        }
+
+        .divClass {
+            position: absolute;
+            top: 25%;
+            left: -3%;
+            width: 100%;
+        }
+
+        .topRight {
+            position: absolute;
+            top: 86px;
+            right: 34px;
+            font-size: 18px;
+        }
+
+        .topRightcsv {
+            position: absolute;
+            top: 86px;
+            right: 195px;
+            font-size: 18px;
+        }
+
+        .analyticsButton {
+            position: absolute;
+            top: 110px;
+            right: 355px;
+            font-size: 18px;
+        }
+
+        .paginationCss {
+            position: absolute;
+            top: 39%;
+            right: -348px;
+        }
+
+        .loaderClass {
+            position: absolute;
+            top: 50%;
+            right: 50%;
+        }
+
+        dialog {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid black;
+        }
+
+        /* .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: #007bff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        } */
+
+
+
+        .downloadPdfButtonCss {
+            position: absolute;
+            top: 88px;
+            left: 200px;
+            font-size: 17px;
+
+        }
+
+        .downloadPdfButtonCssCSV {
+            position: absolute;
+            top: 28px;
+            left: 200px;
+            font-size: 17px;
+        }
+
+        .toast {
+            position: absolute;
+            right: 10px;
+        }
+
+        .indeterminate-progress-bar {
+            /* Color */
+            background-color: #d1d5db;
+
+            /* Rounded border */
+            border-radius: 9999px;
+
+            /* Size */
+            height: 0.5rem;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .indeterminate-progress-bar__progress {
+            /* Color */
+            background-color: #3b82f6;
+
+            /* Rounded border */
+            border-radius: 9999px;
+
+            /* Absolute position */
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            width: 50%;
+
+            /* Move the bar infinitely */
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+            animation-name: indeterminate-progress-bar;
+        }
+
+        #circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+
+
+        a {
+            cursor: pointer;
+        }
+
+        @keyframes indeterminate-progress-bar {
+            from {
+                left: -50%;
+            }
+
+            to {
+                left: 100%;
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+
+
+
+/* ///////////////card layout////////////////////////// */
+.card-container {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap; /* Allow cards to wrap to the next line */
+    justify-content: center; /* Center the cards */
+    gap: 20px; /* Space between cards */
+}
+
+.card {
+    background-image: linear-gradient(90deg, #7ac9f7, #95a8fa, #b684fb);
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    flex: 1 1 300px; /* Allow cards to grow and shrink */
+    max-width: 300px; /* Set a maximum width for the cards */
+    box-sizing: border-box; 
+}
+
+/* Card text styles */
+.card-text {
+    font-size: 1.4em;
+    margin: 5px 0;
+    text-align: center;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .card {
+        flex: 1 1 100%; /* Full width on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        font-size: 0.9em; /* Slightly smaller text on very small screens */
+    }
+}
+/* ///////////////////////////////////////// */
+
+
+ /* to scroll through dropdown list */
+ .dropdown-menu {
+            max-height: 600px; /* Set your desired max height */
+            overflow-y: auto;  /* Enable vertical scrolling */
+        }
+    </style>
+
+
+</head>
+
+<body id="bodyId" onload="getData()"
+    style="visibility: hidden;background-image: linear-gradient(90deg, rgb(69, 184, 251), rgb(109, 135, 250), rgb(154, 83, 250));">
+
+
+    <div id="myToast" role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="false">
+        <div class="toast-header">
+            <strong class="me-auto">Downloading Started</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+
+        <div class="toast-body">
+            Download is in progress.. Wait until the download is complete.
+            <div class="indeterminate-progress-bar">
+                <div class="indeterminate-progress-bar__progress"></div>
+            </div>
+        </div>
+    </div>
+    <!-- <div id="loader" class="loaderClass  spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div> -->
+    <div style="text-align: center;"><span
+            style="color: black; font-family: 'cairo',serif; font-size: medium;"><b><span></span> <a
+                    href="https://codepen.io/a7rarpress" target="_blank"><span
+                        style="color: #ff0000;"></span></a></b></span></div>
+
+    <div id="loader" class='' style="visibility: visible;">
+        <div class='loader'>
+            <div class='loader--dot'></div>
+            <div class='loader--dot'></div>
+            <div class='loader--dot'></div>
+            <div class='loader--dot'></div>
+            <div class='loader--dot'></div>
+            <div class='loader--dot'></div>
+            <div class='loader--text'></div>
+        </div>
+    </div>
+
+
+
+    <div id="containerId" class="container">
+        <div class="position-fixed top-0 end-0 p-2 p.solid ">
+
+
+
+
+            <!-- ///////////////////////////////////// -->
+            <!-- <div style="
+            display: table;
+            margin-left: -386px;
+            margin-top: 9px;
+            font-size: 20px;
+            font-family: auto;
+            justify-content: center;">
+            <span style="
+                box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+                align-items: center;
+                background-color: #f7f7f7;
+                border: 1px solid #f2f2f2;
+                border-radius: 5px;
+                padding: 12px;
+                margin-right: 20px; /* Add margin to create space */
+            ">
+                <strong>Last Online Timestamp</strong>
+            </span>
+            <span style="
+                box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+                align-items: center;
+                background-color: #f7f7f7;
+                border: 1px solid #f2f2f2;
+                border-radius: 5px;
+                padding: 12px;
+            ">
+                <strong>GSM/WiFi</strong>
+            </span>
+        </div> -->
+             <!-- ///////////////////////////////////// -->
+
+            <div style="
+                display: flex;
+                box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+                align-items: center;
+                background-color: #f7f7f7;
+                border: 1px solid #f2f2f2;
+                border-radius: 5px;
+                /* padding: 8px; */
+                /* margin-top: -41px; */
+                font-size: 20px;
+                font-family: auto;
+                justify-content: center;">
+
+                
+                <div style="background-color: #bec6c769;
+                padding: 4px;
+                margin: 5px;
+                border-radius: 5px;">
+                    <strong style="
+                        margin: 3px;
+                        padding: 2px;">Device State
+                    </strong>
+                </div>
+                <div id="circle" class="circle" style="margin: 3px;"></div>
+            </div>
+
+            
+    
+
+
+        </div>
+
+
+
+       
+
+        <!-- <div class="position-fixed top-0 start-0 p-2 p.solid mx-2">
+            <div class="d-flex align-items-center justify-content-end p-2"
+                style=" border: 1px solid rgb(162, 159, 159); border-radius: 8px; background-color: bisque; box-shadow: -3px 5px 4px sandybrown;">
+                <div class="mx-2 dropdown-toggle"><strong>test</strong></div>
+                <div id="circle" class="circle"></div>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" onclick="downloadCsv()">Export</a></li>
+                    <li><a class="dropdown-item" onclick="AllDataInCsv()">Export All </a></li>
+
+                </ul>
+            </div>
+        </div> -->
+        <div class="btn-group position-fixed top-0 start-0 p-2 p.solid mx-2">
+            <button id="controllerId" type="button" class="dropdown-toggle controllerButton" data-bs-toggle="dropdown"
+                aria-expanded="false" >
+                Y041653632892481
+            </button>
+            <!-- <ul class="dropdown-menu"> -->
+            <ul class="dropdown-menu" id="dropdownMenu" >
+                <li><a class="controllerButtonItem" href="./main.html" onclick="">Y041653632892481</a></li>
+                <li><a class="controllerButtonItem" href="./main82.html" onclick="">Y041653632892482</a></li>
+                <li><a class="controllerButtonItem" href="./main83.html" onclick="">Y041653632892483</a></li>
+                <li><a class="controllerButtonItem" href="./main84.html" onclick="">Y041653632892484</a></li>
+
+                <li><a class="controllerButtonItem" href="./main85.html" onclick="">Y041653632892485</a></li>
+                <li><a class="controllerButtonItem" href="./main86.html" onclick="">Y041653632892486</a></li>
+                 <li><a class="controllerButtonItem" href="./main87.html" onclick="">Y041653632892487</a></li>
+                 <li><a class="controllerButtonItem" href="./main88.html" onclick="">Y041653632892488</a></li>
+                <li><a class="controllerButtonItem" href="./main89.html" onclick="">Y041653632892489</a></li>
+                <!-- <li><a class="controllerButtonItem" href="./main90.html" onclick="">Y041653632892490</a></li> -->
+
+
+                <li><a class="controllerButtonItem" href="./main90.html" onclick="">Y041653632892490</a> </li>
+                <li><a class="controllerButtonItem" href="./main91.html" onclick="">Y041653632892491</a></li>
+                <li><a class="controllerButtonItem" href="./main92.html" onclick="">Y041653632892492</a></li>
+                
+
+
+                
+               <li><a class="controllerButtonItem" href="./main93.html" onclick="">Y041653632892493</a></li>
+               <li><a class="controllerButtonItem" href="./main94.html" onclick="">Y041653632892494</a></li>
+               <li><a class="controllerButtonItem" href="./main95.html" onclick="">Y041653632892495</a></li>
+               <li><a class="controllerButtonItem" href="./main96.html" onclick="">Y041653632892496</a></li>
+               <li><a class="controllerButtonItem" href="./main97.html" onclick="">Y041653632892497</a></li>
+               <li><a class="controllerButtonItem" href="./main98.html" onclick="">Y041653632892498</a></li>
+               <li><a class="controllerButtonItem" href="./main99.html" onclick="">Y041653632892499</a></li>
+               <li><a class="controllerButtonItem" href="./main500.html" onclick="">Y041653632892500</a></li>
+
+
+
+            </ul>
+
+            <!-- <button id="addButton" type="button" class="btn btn-primary">Add</button>   
+            <script>
+                let currentId = 86; // Start from the last existing ID
+document.getElementById('addButton').addEventListener('click', function() {
+    currentId++; // Increment the ID for the new page
+    const newId = currentId;
+    const newPageLink = `./main${newId}.html`;
+    const newPageName = `Y0416536328924${newId}`; // Adjust the naming as needed
+    // Create a new list item
+    const newListItem = document.createElement('li');
+    const newLink = document.createElement('a');
+    newLink.className = 'controllerButtonItem';
+    newLink.href = newPageLink;
+    newLink.textContent = newPageName;
+
+    newListItem.appendChild(newLink);
+    document.getElementById('dropdownMenu').appendChild(newListItem);
+});
+            </script>      -->
+
+        </div>
+
+
+
+
+
+
+
+        <!-- <div class="row mt-4">
+            <div class="col text-center">
+                <img src="./snrasLogo.png" alt="" style="width: 150px">
+                <h1>SNRAS SYSTEMS</h1>
+            </div>
+
+
+
+        </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="row w-80 mainButtonClass">
+            <div class="row mt-4">
+                <div class="col text-center">
+                    <img src="./snrasLogo.png" alt="" style="width: 150px">
+                    <!-- <h1>SNRAS SYSTEMS</h1> -->
+                </div>
+            </div>
+            <div class="buttonBoxClass">
+                <div>
+                    <button id="viewPreviousDataButtonId" type="submit" onclick="viewPreviousData()"
+                        class="b1button">Old Data
+                    </button>
+                </div>
+                <div>
+                    <a class="b1button" href="./waterQualityAnalytics.html" role="button"
+                        style="text-decoration: none">Analytics</a>
+                </div>
+                <div>
+                    <div>
+                        <button type="button" class="b1button" data-bs-toggle="dropdown" aria-expanded="false">
+                            PDF
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="DownloadPDF()">Export PDF</a></li>
+                            <!-- <li><a class="dropdown-item"  onclick="DownloadPdfAllData()">DownloadAllDataInPDF</a></li> -->
+
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <button type="button" class="b1button" data-bs-toggle="dropdown" aria-expanded="false">
+                            CSV
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="downloadCsv()">Export</a></li>
+                            <li><a class="dropdown-item" onclick="AllDataInCsv()">Export All </a></li>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+<!-- ///////////within same line image and buttons are there/////////////////// -->
+<!-- 
+        <div class="row w-80 mainButtonClass">
+            <span class="row mt-4">
+                <span class="col text-start" style="display: flex;">
+                    <img src="./snrasLogo.png" alt="" style="width: 120px">
+
+    <span class="buttonBoxClass col text-center ">
+        <div>
+            <button id="viewPreviousDataButtonId" class="b1button" type="submit"
+                onclick="viewPreviousData()">Old
+                Data
+            </button>
+        </div>
+        <div>
+            <a class="b1button" href="./waterQualityAnalytics.html" role="button"
+                style="text-decoration: none;">Analytics</a>
+        </div>
+        <div>
+            <button type="button" class="b1button" data-bs-toggle="dropdown" aria-expanded="false">
+                PDF
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" onclick="DownloadPDF()">Export PDF</a></li>
+
+            </ul>
+        </div>
+        <div>
+            <button type="button" class="b1button" data-bs-toggle="dropdown" aria-expanded="false">
+                CSV
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" onclick="downloadCsv()">Export</a></li>
+                <li><a class="dropdown-item" onclick="AllDataInCsv()">Export All </a></li>
+
+            </ul>
+        </div>
+    </span>
+</span>   </span> -->
+
+            
+
+            <!-- <div> -->
+            <div id="pagination" class="pageCart" style="display: none;">
+                <button id="prevBtn">&laquo; Prev</button>
+                <span id="pageInfo" class="mx-2"></span>
+                <button id="nextBtn">Next &raquo;</button>
+                <br>
+                Go to page:
+                <input type="number" id="pageInput" min="1" value="1">
+                <button id="goToPageBtn" class="m-1">Go</button>
+                <h6 id="errorMessage" class="text-danger"></h6>
+            </div>
+
+            <!-- </div> -->
+
+
+
+
+
+
+
+
+
+
+
+<!-- ////////////////card layout////////////////////////// -->
+
+<!-- <div class="row w-80 mainButtonClass"> -->
+    <div class="col-lg-12 mt-4 card-container">
+        <!-- <div class="card">
+            <div class="card-body">
+                <p class="card-text"><strong>Insertion ID:</strong> 
+                </br>   <span id="insertion-id"></span></p>
+            </div>
+        </div> -->
+
+        <!-- <div class="card">
+            <div class="card-body">
+                <p class="card-text"><strong>DateTime:</strong> </br> <span id="date-time"></span></p>
+            </div>
+        </div> -->
+
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text"><strong>Dissolved Oxygen:</strong> </br> <span id="do-value"></span></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text"><strong>Total Dissolved Solids:</strong> </br> <span id="tds-value"></span></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text"><strong>pH:</strong> </br> <span id="ph-value"></span></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text"><strong>Temperature:</strong> </br> <span id="temperature-value"></span></p>
+            </div>
+        </div>
+    </div>
+    <!-- </div> -->
+
+<!-- ///////////////////////////////// -->
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ///////////////////// table //////////////////////////////////////////// -->
+            <div class="mt-4 mb-4" >
+                <div class="col-lg-12" style="display: flex; justify-content: center;">
+                    <div class="table-responsive-sm text-center mx-auto" style="display: flex; flex-grow: 1;">
+                        <table id="firebaseTable" style="flex-grow: 1">
+                            <thead style="background-image: linear-gradient(90deg, #7ac9f7, #95a8fa, #b684fb);">
+
+                                <!-- <th>Insertion Id</th> -->
+                                <th>DateTime</th>
+                                <th>DO</th>
+                                <th>TDS</th>
+                                <th> PH</th>
+                                <th>TEMPERATURE</th>
+                            </thead>
+                            <tbody id="tbody1" style="background-color:azure">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- <div id="loader" class="loaderClass  spinner-border " role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div> -->
+
+
+                    <script src="./detail.js"></script>
+
+
+                    <div id="oldData" class="divClass" style="visibility:hidden">
+                    </div>
+                    <script src="./detail.js"></script>
+                </div>
+
+
+
+
+                <div class="col-lg-12 mt-2" style="display: flex; justify-content: center;">
+                    <div class="table-responsive-sm text-center mx-auto" style="display: flex; flex-grow: 1;">
+                        <table id="sqlTable" display="none" style="flex-grow: 1">
+                            <thead style="background-image: linear-gradient(90deg, #7ac9f7, #95a8fa, #b684fb);">
+                                <center>
+                                    <th>Insertion Id</th>
+                                    <th>DateTime</th>
+                                    <th>DO</th>
+                                    <th>TDS</th>
+                                    <th> PH</th>
+                                    <th>TEMPERATURE</th>
+                                </center>
+
+                            </thead>
+                            <tbody id="tbody2" style="background-color:azure">
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+
+
+
+    </div>
+</body>
+
+</html>

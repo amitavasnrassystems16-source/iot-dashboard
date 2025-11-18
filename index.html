@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="./snrasLogo.png" type="image/icon type">
+  <title>water Quality</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+
+
+</head>
+
+<body>
+  <section class="gradient-form" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-xl-5">
+          <div class="card rounded-4 text-black mt-4 ">
+            <div>
+              <div class="mb-2">
+                <div class="card-body p-md-5 mx-md-4">
+
+                  <div class="text-center mb-2">
+                    <img src="./snrasLogo.png" style="width: 150px" alt="logo">
+
+                  </div>
+
+                  <form action="./main.html" id="formData">
+                    <!-- <p>Please login to your account</p> -->
+
+                    <div class="form-outline mt-4 mb-4">
+                      <input type="email" id="form2Example11" class="form-control" placeholder="Email..." />
+                      <!-- <label class="form-label" for="form2Example11">Username</label> -->
+                    </div>
+
+                    <div class="form-outline mt-4 mb-4">
+                      <input type="password" id="form2Example22" class="form-control" placeholder="Password..." />
+                      <!-- <label class="form-label" for="form2Example22">Password</label> -->
+                    </div>
+
+                    <div class="text-center pt-1 pb-1 mt-4">
+                      <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
+                        type="submit">Login</button>
+                      <!-- <a class="text-muted" href="#!">Forgot password?</a> -->
+                    </div>
+
+                  </form>
+                  <div id="error-message" class="text-center" style="color: rgb(211, 49, 49);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+
+  <script>
+    // Initialize Firebase App
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbcICT3ZbfJWFPLXzbG4UUeWG7Q2OQEjg",
+      authDomain: "water-quality-35a00.firebaseapp.com",
+      databaseURL: "https://water-quality-35a00-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "water-quality-35a00",
+      storageBucket: "water-quality-35a00.appspot.com",
+      messagingSenderId: "138665105368",
+      appId: "1:138665105368:web:0896a5e8062eb9e49844ad",
+      measurementId: "G-NNCT5SYCJJ"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    // Get Firebase Auth instance
+    const auth = firebase.auth();
+
+    // Attach event listener to login form
+    const loginForm = document.getElementById("formData");
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault(); // Prevent form from submitting
+
+      const email = loginForm.form2Example11.value;
+      const password = loginForm.form2Example22.value;
+
+      if (email && password) {
+        auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            window.location.href = "waterQualityAnalytics.html"
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.error("---------Login error---------:", errorCode, errorMessage);
+            document.getElementById("error-message").textContent = "Incorrect email or password";
+          });
+      } else {
+        document.getElementById("error-message").textContent = "Please enter email address or password";
+
+      }
+
+    });
+  </script>
+</body>
+</html>
